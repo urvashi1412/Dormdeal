@@ -15,7 +15,12 @@ connectDB();
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
-
+app.get("/", (req, res) => {
+  res.json({
+    status: "success",
+    message: "DormDeal Backend is running"
+  });
+});
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/listings', require('./routes/listings'));
