@@ -1,39 +1,81 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Heart, MapPin } from 'lucide-react';
+import { ConditionBadge } from './ui/Badge';
+import Avatar from './ui/Avatar';
+import { formatPrice, timeAgo } from '../utils/format';
+import { isWishlisted, toggleWishlist } from '../utils/storage';
 
-const CONDITION_BADGE = {
-  'new':      'badge badge-green',
-  'like-new': 'badge badge-green',
-  'good':     'badge badge-blue',
-  'fair':     'badge badge-amber',
-  'poor':     'badge badge-red',
+const CATEGORY_LABELS = {
+  textbooks: 'Books',
+  furniture: 'Furniture',
+  electronics: 'Electronics',
+  clothes: 'Clothes',
+  food: 'Food',
+  other: 'Other',
 };
 
-const CATEGORY_EMOJI = {
-  textbooks:'📚', furniture:'🛋️', electronics:'💻', clothes:'👕', food:'🍕', other:'📦'
-};
+export default function ListingCard({ listing, compact = false }) {
+  const [wishlisted, setWishlisted] = useState(false);
 
-export default function ListingCard({ listing }) {
+  useEffect(() => {
+    setWishlisted(isWishlisted(listing._id));
+    const handler = () => setWishlisted(isWishlisted(listing._id));
+    window.addEventListener('dd-wishlist-change', handler);
+    return () => window.removeEventListener('dd-wishlist-change', handler);
+  }, [listing._id]);
+
+  const handleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(listing._id);
+  };
+
   return (
-    <Link to={`/listing/${listing._id}`} className="card">
-      <div className="card-img">
-        {listing.photos && listing.photos.length > 0
-          ? <img src={listing.photos[0]} alt={listing.title} />
-          : <span>{CATEGORY_EMOJI[listing.category] || '📦'}</span>
-        }
-      </div>
-      <div className="card-body">
-        <div className="card-title">{listing.title}</div>
-        <div className="card-meta">
-          <span className="card-price">${listing.price}</span>
-          <span className={CONDITION_BADGE[listing.condition] || 'badge badge-blue'}>
-            {listing.condition}
-          </span>
+    <Link to={`/listing/${listing._id}`} className={`dd-listing-card ${compact ? 'dd-listing-card--compact' : ''}`}>
+      <div className="dd-listing-card__media">
+        {listing.photos?.length > 0 ? (
+          <img src={listing.photos[0]} alt={listing.title} loading="lazy" />
+        ) : (
+          <div className="dd-listing-card__placeholder">
+            <span>{CATEGORY_LABELS[listing.category]?.charAt(0) || '?'}</span>
+          </div>
+        )}
+        <div className="dd-listing-card__badges">
+          <ConditionBadge condition={listing.condition} />
+          {listing.status === 'sold' && <span className="dd-badge dd-badge--danger">Sold</span>}
         </div>
-        {listing.dorm && <div className="card-dorm">📍 {listing.dorm}</div>}
+        <button
+          type="button"
+          className={`dd-listing-card__wishlist ${wishlisted ? 'is-active' : ''}`}
+          onClick={handleWishlist}
+          aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+        >
+          <Heart size={16} fill={wishlisted ? 'currentColor' : 'none'} />
+        </button>
+      </div>
+
+      <div className="dd-listing-card__body">
+        <h3 className="dd-listing-card__title">{listing.title}</h3>
+        <div className="dd-listing-card__price">{formatPrice(listing.price)}</div>
+        <div className="dd-listing-card__meta">
+          {listing.dorm && (
+            <span className="dd-listing-card__location">
+              <MapPin size={12} />
+              {listing.dorm}
+            </span>
+          )}
+          {listing.createdAt && (
+            <span className="dd-listing-card__time">{timeAgo(listing.createdAt)}</span>
+          )}
+        </div>
         {listing.seller && (
-          <div className="card-dorm" style={{marginTop:2}}>
-            {listing.seller.name}
-            {listing.seller.rating > 0 && ` · ⭐ ${listing.seller.rating.toFixed(1)}`}
+          <div className="dd-listing-card__seller">
+            <Avatar name={listing.seller.name} size="xs" />
+            <span>{listing.seller.name}</span>
+            {listing.seller.rating > 0 && (
+              <span className="dd-listing-card__rating">{listing.seller.rating.toFixed(1)}</span>
+            )}
           </div>
         )}
       </div>

@@ -1,28 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { Check } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/ui/Logo';
 
 export default function LoginPage() {
   const { login } = useAuth();
-
-  const [form, setForm] = useState({
-    email: '',
-    password: ''
-  });
-
+  const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError('');
     setLoading(true);
-
     try {
       await login(form.email, form.password);
-
       toast.success('Welcome back!');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
@@ -32,88 +26,70 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <span style={{ fontSize: 36 }}>🏠</span>
-
-          <h1 className="auth-title" style={{ marginTop: 8 }}>
-            Sign in
+    <div className="dd-auth-page">
+      <div className="dd-auth-layout">
+        <div className="dd-auth-brand">
+          <Logo />
+          <h1 style={{ marginTop: 28 }}>
+            Your campus marketplace,<br />
+            <em>built for students.</em>
           </h1>
-
-          <p className="auth-subtitle">
-            Buy and sell items in your college community
+          <p>
+            Buy and sell with verified students at your college. No strangers, no scams — just your campus community.
           </p>
+          <div className="dd-auth-features">
+            <div className="dd-auth-feature"><Check size={16} /> Campus-exclusive listings</div>
+            <div className="dd-auth-feature"><Check size={16} /> In-app messaging</div>
+            <div className="dd-auth-feature"><Check size={16} /> Free to list items</div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <div className="dd-auth-card">
+          <h2 className="dd-auth-card__title">Sign in</h2>
+          <p className="dd-auth-card__subtitle">Welcome back to DormDeal</p>
 
-          <div className="form-group">
-            <label className="form-label">
-              Email
-            </label>
+          <form onSubmit={handleSubmit}>
+            <div className="dd-form-group">
+              <label className="dd-form-label">Email</label>
+              <input
+                className="dd-input"
+                type="email"
+                placeholder="you@college.edu"
+                value={form.email}
+                onChange={e => setForm({ ...form, email: e.target.value })}
+                required
+                autoFocus
+              />
+            </div>
 
-            <input
-              className="form-input"
-              type="email"
-              placeholder="Enter your email"
-              value={form.email}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  email: e.target.value
-                })
-              }
-              required
-            />
-          </div>
+            <div className="dd-form-group">
+              <label className="dd-form-label">Password</label>
+              <input
+                className="dd-input"
+                type="password"
+                placeholder="••••••••"
+                value={form.password}
+                onChange={e => setForm({ ...form, password: e.target.value })}
+                required
+              />
+            </div>
 
-          <div className="form-group">
-            <label className="form-label">
-              Password
-            </label>
+            {error && <p className="dd-form-error">{error}</p>}
 
-            <input
-              className="form-input"
-              type="password"
-              placeholder="••••••••"
-              value={form.password}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  password: e.target.value
-                })
-              }
-              required
-            />
-          </div>
+            <button
+              type="submit"
+              className="dd-btn dd-btn--primary dd-btn--block dd-btn--lg"
+              disabled={loading}
+              style={{ marginTop: 8 }}
+            >
+              {loading ? 'Signing in…' : 'Sign in'}
+            </button>
+          </form>
 
-          {error && (
-            <p className="form-error">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            className="btn btn-primary"
-            style={{
-              width: '100%',
-              justifyContent: 'center'
-            }}
-            disabled={loading}
-          >
-            {loading ? 'Signing in…' : 'Sign in'}
-          </button>
-
-        </form>
-
-        <p className="auth-footer">
-          Don't have an account?{' '}
-          <a href="/register">Sign up</a>
-        </p>
-
+          <p className="dd-auth-footer">
+            Don&apos;t have an account? <Link to="/register">Create one</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

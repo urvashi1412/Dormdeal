@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { loadDemoWishlistIfNeeded } from '../utils/storage';
 
 const AuthContext = createContext(null);
 
@@ -12,7 +13,10 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       axios.get('/api/users/me')
-        .then(r => setUser(r.data))
+        .then(r => {
+          setUser(r.data);
+          loadDemoWishlistIfNeeded(r.data.email);
+        })
         .catch(() => logout())
         .finally(() => setLoading(false));
     } else {
@@ -26,6 +30,7 @@ export const AuthProvider = ({ children }) => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setToken(data.token);
     setUser(data.user);
+    loadDemoWishlistIfNeeded(data.user.email);
   };
 
   const register = async (name, email, password, college) => {
@@ -34,6 +39,7 @@ export const AuthProvider = ({ children }) => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setToken(data.token);
     setUser(data.user);
+    loadDemoWishlistIfNeeded(data.user.email);
   };
 
   const logout = () => {
