@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import {
   Search, X, Shield, Check, ArrowRight, BookOpen, Laptop, Sofa,
@@ -48,7 +48,7 @@ export default function HomePage() {
   const fetchListings = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get('/api/listings', {
+      const { data } = await api.get('/api/listings', {
         params: { category, sort, search: query, page, limit: 20 },
       });
       setListings(data.listings);
@@ -101,7 +101,7 @@ export default function HomePage() {
     }
     Promise.all(
       ids.map(id =>
-        axios.get(`/api/listings/${id}`).then(r => r.data).catch(() => null)
+        api.get(`/api/listings/${id}`).then(r => r.data).catch(() => null)
       )
     ).then(items => setWishlistItems(items.filter(Boolean)));
   }, [wishlistOpen, showWishlistOnly, listings]);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import { Award, Star } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const [stats, setStats] = useState({ active: 0, sold: 0, total: 0 });
 
   useEffect(() => {
-    axios.get('/api/listings/user/me')
+    api.get('/api/listings/user/me')
       .then(r => {
         const listings = r.data;
         setStats({
@@ -29,7 +29,7 @@ export default function ProfilePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await axios.patch('/api/users/me', { name });
+      await api.patch('/api/users/me', { name });
       toast.success('Profile updated!');
     } catch {
       toast.error('Could not update profile');

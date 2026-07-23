@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import { Upload, ImagePlus, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import Badge, { ConditionBadge } from '../components/ui/Badge';
@@ -66,7 +66,7 @@ export default function CreateListing() {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => fd.append(k, v));
       photos.forEach(p => fd.append('photos', p));
-      const { data } = await axios.post('/api/listings', fd, {
+      const { data } = await api.post('/api/listings', fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success('Listing posted!');

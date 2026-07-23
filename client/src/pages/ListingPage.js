@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import {
   ArrowLeft, MapPin, MessageCircle, Share2, Heart, Shield, Trash2, CheckCircle,
@@ -27,12 +27,12 @@ export default function ListingPage() {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`/api/listings/${id}`)
+    api.get(`/api/listings/${id}`)
       .then(r => {
         setListing(r.data);
         addRecentlyViewed(r.data);
         setWishlisted(isWishlisted(r.data._id));
-        return axios.get('/api/listings', {
+        return api.get('/api/listings', {
           params: { category: r.data.category, limit: 5 },
         });
       })
@@ -61,7 +61,7 @@ export default function ListingPage() {
   const handleMarkSold = async () => {
     setMarking(true);
     try {
-      await axios.patch(`/api/listings/${id}`, { status: 'sold' });
+      await api.patch(`/api/listings/${id}`, { status: 'sold' });
       setListing(l => ({ ...l, status: 'sold' }));
       toast.success('Marked as sold!');
     } catch {
@@ -74,7 +74,7 @@ export default function ListingPage() {
   const handleDelete = async () => {
     if (!window.confirm('Delete this listing?')) return;
     try {
-      await axios.delete(`/api/listings/${id}`);
+      await api.delete(`/api/listings/${id}`);
       toast.success('Listing deleted');
       navigate('/my-listings');
     } catch {

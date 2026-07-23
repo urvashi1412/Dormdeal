@@ -1,10 +1,14 @@
-# DormDeal Seed Data Task
+# TODO: Migrate to shared Axios instance
 
-- [ ] Create `server/scripts/seed.js` to generate realistic VIT demo users, 60–80 listings, and ~30 message threads.
-- [ ] Create `server/scripts/reset.js` to wipe demo data (Users/Listing/Message collections) so `npm run reset` returns to a clean state.
-- [ ] Update `server/package.json` to add `npm run seed` and `npm run reset` scripts.
-- [ ] Seed using backend-supported enums only (`Listing.category`, `Listing.status`).
-- [ ] Ensure listing `photos` use real Unsplash/static image URLs (no UI placeholders).
-- [ ] Ensure message `roomId` format is `${listingId}_${buyerId}`.
-- [ ] Run `npm run reset` then `npm run seed` and verify key pages render correctly.
+## Completed
+- [x] 1. Create `client/src/api.js` with shared Axios instance
+- [x] 2. Fix `AuthContext.js` — replace `axios.post` → `api.post`
+- [x] 3. Update `HomePage.js` — import api, replace axios.get → api.get
+- [x] 4. Update `CreateListing.js` — import api, replace axios.post → api.post
+- [x] 5. Update `ListingPage.js` — import api, replace axios.get/delete/patch → api.get/delete/patch
+- [x] 6. Update `MessagesPage.js` — import api, replace axios.get/post → api.get/post
+- [x] 7. Update `MyListings.js` — import api, replace axios.get → api.get
+- [x] 8. Update `ProfilePage.js` — import api, replace axios.get/patch → api.get/patch
+- [x] 9. Remove `"proxy"` from `client/package.json`
+- [x] 10. Delete old `client/api.js`
 

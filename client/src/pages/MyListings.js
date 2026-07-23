@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import { Plus, Package, CheckCircle, Eye } from 'lucide-react';
 import ListingCard from '../components/ListingCard';
@@ -12,7 +12,7 @@ export default function MyListings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/api/listings/user/me')
+    api.get('/api/listings/user/me')
       .then(r => setListings(r.data))
       .catch(() => toast.error('Could not load listings'))
       .finally(() => setLoading(false));

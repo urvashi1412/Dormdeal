@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import { Search, ArrowLeft } from 'lucide-react';
@@ -31,7 +31,7 @@ export default function MessagesPage() {
   }, []);
 
   useEffect(() => {
-    axios.get('/api/messages/conversations')
+    api.get('/api/messages/conversations')
       .then(r => setThreads(r.data))
       .catch(() => {});
   }, []);
@@ -60,7 +60,7 @@ export default function MessagesPage() {
 
   useEffect(() => {
     if (!activeRoom) return;
-    axios.get(`/api/messages/${activeRoom}`)
+    api.get(`/api/messages/${activeRoom}`)
       .then(r => setMessages(r.data))
       .catch(() => toast.error('Could not load messages'));
     socket.emit('join_room', activeRoom);
@@ -85,7 +85,7 @@ export default function MessagesPage() {
     const body = text.trim();
     setText('');
     try {
-      const { data } = await axios.post('/api/messages', {
+      const { data } = await api.post('/api/messages', {
         roomId: activeRoom,
         listingId: activeListing?._id,
         receiverId: receiver._id,
