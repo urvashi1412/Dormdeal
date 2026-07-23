@@ -26,7 +26,7 @@ export default function MessagesPage() {
   const bottomRef = useRef(null);
 
   useEffect(() => {
-    socket = io('http://localhost:5000');
+    socket = io('https://dormdeal-backend.onrender.com');
     return () => socket.disconnect();
   }, []);
 
